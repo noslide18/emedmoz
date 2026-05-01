@@ -50,17 +50,55 @@ function gerarEmailAutomatico() {
   emailField.value = emailGerado;
 }
 
+
+// ==================== CONTROLAR PROPEDÊUTICO - CRIAR PERFIL ====================
+function controlarPropedeutico() {
+  const uniSelect = document.getElementById('criar-universidade');
+  const anoSelect = document.getElementById('criar-ano');
+
+  if (!uniSelect || !anoSelect) return;
+
+  const opcaoPropedeutico = anoSelect.querySelector('option[value="Propedêutico"]');
+
+  if (uniSelect.value === 'UCM') {
+    opcaoPropedeutico.disabled = false;
+  } else {
+    opcaoPropedeutico.disabled = true;
+    if (anoSelect.value === 'Propedêutico') anoSelect.value = '';
+  }
+}
+
+// ==================== CONTROLAR PROPEDÊUTICO - EDITAR PERFIL ====================
+function controlarPropedeuticoEditar() {
+  const uniSelect = document.getElementById('edit-universidade');
+  const anoSelect = document.getElementById('edit-ano');
+
+  if (!uniSelect || !anoSelect) return;
+
+  const opcaoPropedeutico = anoSelect.querySelector('option[value="Propedêutico"]');
+
+  if (uniSelect.value === 'UCM') {
+    opcaoPropedeutico.disabled = false;
+  } else {
+    opcaoPropedeutico.disabled = true;
+    if (anoSelect.value === 'Propedêutico') {
+      anoSelect.value = '';
+    }
+  }
+}
+
 // ==================== PERFIL ====================
 function mostrarModalCriacaoPerfil() {
   const modal = document.getElementById('modal-criar-perfil');
   modal.classList.add('active');
   modal.classList.remove('hidden');
+  controlarPropedeutico(); 
 }
 
 function criarPerfil() {
   const nome = document.getElementById('criar-nome').value.trim();
   const universidade = document.getElementById('criar-universidade').value;
-  const ano = document.getElementById('criar-ano').value.trim();
+  const ano = document.getElementById('criar-ano').value;
   const email = document.getElementById('criar-email').value.trim();
 
   if (!nome || !universidade || !ano) {
@@ -73,12 +111,7 @@ function criarPerfil() {
 
   if (avatarFile) {
     cortarImagemQuadrada(avatarFile, function (imagemFinal) {
-      usuarioAtual = {
-        nome,
-        universidade,
-        curso: "Medicina",
-        ano,
-        email,
+      usuarioAtual = { nome, universidade, curso: "Medicina", ano, email,
         bio: document.getElementById('criar-bio').value.trim() || "Estudante de Medicina.",
         interesses: document.getElementById('criar-interesses').value.trim() || "",
         avatar: imagemFinal
@@ -88,13 +121,7 @@ function criarPerfil() {
     return;
   }
 
-  // Sem foto enviada
-  usuarioAtual = {
-    nome,
-    universidade,
-    curso: "Medicina",
-    ano,
-    email,
+  usuarioAtual = { nome, universidade, curso: "Medicina", ano, email,
     bio: document.getElementById('criar-bio').value.trim() || "Estudante de Medicina.",
     interesses: document.getElementById('criar-interesses').value.trim() || "",
     avatar: "👩‍⚕️"
@@ -105,13 +132,12 @@ function criarPerfil() {
 
 function finalizarCriacaoPerfil(nome) {
   localStorage.setItem(STORAGE_USER_KEY, JSON.stringify(usuarioAtual));
-
   const modal = document.getElementById('modal-criar-perfil');
   modal.classList.remove('active');
   modal.classList.add('hidden');
 
   atualizarPerfil();
-  showSection('home');           // ← Correção importante
+  showSection('home');
   alert(`✅ Perfil criado com sucesso, ${nome.split(" ")[0]}!`);
 }
 
@@ -120,11 +146,10 @@ function atualizarPerfil() {
   if (!usuarioAtual) return;
 
   document.getElementById('profile-name').textContent = usuarioAtual.nome;
-  document.getElementById('profile-course').textContent = `${usuarioAtual.ano} - Medicina`;
+  document.getElementById('profile-course').textContent = `${usuarioAtual.ano || '—'} - Medicina`;
   document.getElementById('profile-university').textContent = usuarioAtual.universidade;
 
   const avatarElement = document.getElementById('profile-avatar');
-  
   if (usuarioAtual.avatar && usuarioAtual.avatar.startsWith('data:image')) {
     avatarElement.innerHTML = `<img src="${usuarioAtual.avatar}" alt="Foto de perfil">`;
   } else {
@@ -157,13 +182,16 @@ function editarPerfil() {
 
   document.getElementById('edit-nome').value = usuarioAtual.nome;
   document.getElementById('edit-universidade').value = usuarioAtual.universidade;
-  document.getElementById('edit-ano').value = usuarioAtual.ano;
-  document.getElementById('edit-email').value = usuarioAtual.email;
-  document.getElementById('edit-bio').value = usuarioAtual.bio;
-  document.getElementById('edit-interesses').value = usuarioAtual.interesses;
+  document.getElementById('edit-ano').value = usuarioAtual.ano || '';
+  document.getElementById('edit-email').value = usuarioAtual.email || '';
+  document.getElementById('edit-bio').value = usuarioAtual.bio || '';
+  document.getElementById('edit-interesses').value = usuarioAtual.interesses || '';
 
   document.getElementById('modal-editar-perfil').classList.add('active');
   document.getElementById('modal-editar-perfil').classList.remove('hidden');
+
+  // Aplicar restrição de Propedêutico ao abrir o modal de edição
+  controlarPropedeuticoEditar();
 }
 
 function salvarPerfil() {
@@ -185,7 +213,7 @@ function salvarPerfil() {
 function salvarEAtualizarPerfil() {
   usuarioAtual.nome = document.getElementById('edit-nome').value.trim();
   usuarioAtual.universidade = document.getElementById('edit-universidade').value;
-  usuarioAtual.ano = document.getElementById('edit-ano').value.trim();
+  usuarioAtual.ano = document.getElementById('edit-ano').value;
   usuarioAtual.email = document.getElementById('edit-email').value.trim();
   usuarioAtual.bio = document.getElementById('edit-bio').value.trim();
   usuarioAtual.interesses = document.getElementById('edit-interesses').value.trim();
@@ -210,13 +238,10 @@ function cortarImagemQuadrada(file, callback) {
     img.onload = function () {
       const canvas = document.createElement("canvas");
       const size = Math.min(img.width, img.height);
-
       canvas.width = size;
       canvas.height = size;
-
       const ctx = canvas.getContext("2d");
       ctx.drawImage(img, (img.width - size)/2, (img.height - size)/2, size, size, 0, 0, size, size);
-
       callback(canvas.toDataURL("image/jpeg", 0.92));
     };
     img.src = e.target.result;
@@ -233,23 +258,16 @@ function logout() {
 }
 
 function showSection(section) {
-  document.querySelectorAll('.section').forEach(sec => {
-    sec.classList.remove('active');
-    sec.classList.add('hidden');
-  });
-
+  document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active', 'hidden'));
   const target = document.getElementById(`${section}-section`);
   if (target) {
     target.classList.add('active');
     target.classList.remove('hidden');
   }
 
-  // Atualizar navegação inferior
   document.querySelectorAll('.bottom-nav a').forEach(link => {
     link.classList.remove('active');
-    if (link.getAttribute('onclick').includes(`'${section}'`)) {
-      link.classList.add('active');
-    }
+    if (link.getAttribute('onclick').includes(`'${section}'`)) link.classList.add('active');
   });
 }
 
@@ -271,7 +289,6 @@ function fecharModal() {
 
 function publicarPost() {
   if (!usuarioAtual) return;
-
   const titulo = document.getElementById('post-titulo').value.trim();
   const conteudo = document.getElementById('post-conteudo').value.trim();
 
@@ -322,6 +339,23 @@ function renderizarPosts() {
       </div>
     `).join('');
 }
+
+// ==================== EVENT LISTENERS ====================
+document.addEventListener('DOMContentLoaded', () => {
+  // Para o modal de criar perfil
+  const uniCriar = document.getElementById('criar-universidade');
+  if (uniCriar) uniCriar.addEventListener('change', () => {
+    gerarEmailAutomatico();
+    controlarPropedeutico();
+  });
+
+  const anoCriar = document.getElementById('criar-ano');
+  if (anoCriar) anoCriar.addEventListener('change', gerarEmailAutomatico);
+
+  // Para o modal de editar perfil
+  const uniEditar = document.getElementById('edit-universidade');
+  if (uniEditar) uniEditar.addEventListener('change', controlarPropedeuticoEditar);
+});
 
 // ==================== INICIALIZAÇÃO ====================
 window.onload = function () {
