@@ -83,7 +83,7 @@
         <div class="profile-header">
           <div id="profile-avatar" class="avatar-container"></div>
           <h2 id="profile-name">Nome do Estudante</h2>
-          <p id="profile-course">° Ano - Medicina</p>
+          <p id="profile-course">— - Medicina</p>
           <p id="profile-university" class="university">Universidade</p>
         </div>
 
@@ -114,7 +114,7 @@
 
         <div class="profile-info">
           <h3>Informações</h3>
-          <p><strong>Email:</strong> <span id="profile-email">-</span></p>
+          <p><strong>email:</strong> <span id="profile-email">-</span></p>
           <p><strong>Bio:</strong> <span id="profile-bio">-</span></p>
           <p><strong>Interesses:</strong> <span id="profile-interesses">-</span></p>
         </div>
@@ -143,6 +143,8 @@
   </nav>
 </div>
 
+<!-- ====================== MODAIS ====================== -->
+
 <!-- MODAL CRIAR PERFIL -->
 <div id="modal-criar-perfil" class="modal hidden">
   <div class="modal-content">
@@ -150,10 +152,10 @@
     <p>Crie seu perfil para continuar.</p>
 
     <label>Nome completo *</label>
-    <input type="text" id="criar-nome" class="input" placeholder="Ex: Edilson Henriques" oninput="gerarEmailAutomatico()">
+    <input type="text" id="criar-nome" class="input" placeholder="Ex: Edilson Henriques" oninput="geraremailAutomatico()">
 
     <label>Universidade *</label>
-    <select id="criar-universidade" class="input" onchange="gerarEmailAutomatico()">
+    <select id="criar-universidade" class="input" onchange="geraremailAutomatico(); controlarPropedeutico()">
       <option value="">Selecione a universidade</option>
       <option value="UCM">Universidade Católica de Moçambique</option>
       <option value="UEM">Universidade Eduardo Mondlane</option>
@@ -163,9 +165,18 @@
     </select>
 
     <label>Ano / Semestre *</label>
-    <input type="text" id="criar-ano" class="input" placeholder="Ex: 1º Ano">
+    <select id="criar-ano" class="input" required>
+      <option value="">Selecione o ano</option>
+      <option value="Propedêutico">Propedêutico</option>
+      <option value="1°">1° Ano</option>
+      <option value="2°">2° Ano</option>
+      <option value="3°">3° Ano</option>
+      <option value="4°">4° Ano</option>
+      <option value="5°">5° Ano</option>
+      <option value="6°">6° Ano</option>
+    </select>
 
-    <label>Email institucional</label>
+    <label>email institucional</label>
     <input type="email" id="criar-email" class="input" placeholder="Será gerado automaticamente" readonly>
 
     <label>Biografia</label>
@@ -190,7 +201,10 @@
   <div class="modal-content">
     <h3>Editar Perfil</h3>
 
-    <input type="text" id="edit-nome" class="input" placeholder="Nome completo">
+    <label>Nome completo</label>
+    <input type="text" id="edit-nome" class="input">
+
+    <label>Universidade</label>
     <select id="edit-universidade" class="input">
       <option value="UCM">UCM</option>
       <option value="UEM">UEM</option>
@@ -198,12 +212,29 @@
       <option value="UNIAC">UNIAC</option>
       <option value="UZ">UZ</option>
     </select>
+
+    <label>Ano / Semestre</label>
+    <select id="edit-ano" class="input">
+      <option value="Propedêutico">Propedêutico</option>
+      <option value="1°">1° Ano</option>
+      <option value="2°">2° Ano</option>
+      <option value="3°">3° Ano</option>
+      <option value="4°">4° Ano</option>
+      <option value="5°">5° Ano</option>
+      <option value="6°">6° Ano</option>
+    </select>
+
     <label>Alterar foto de perfil</label>
     <input type="file" id="edit-avatar" accept="image/*" class="input">
-    <input type="text" id="edit-ano" class="input" placeholder="Ano/Semestre">
+
+    <label>email</label>
     <input type="email" id="edit-email" class="input">
+
+    <label>Biografia</label>
     <textarea id="edit-bio" class="input" rows="3"></textarea>
-    <input type="text" id="edit-interesses" class="input" placeholder="Interesses">
+
+    <label>Áreas de interesse</label>
+    <input type="text" id="edit-interesses" class="input">
 
     <div class="modal-actions">
       <button type="button" class="btn-secondary" onclick="fecharModalEditarPerfil()">Cancelar</button>
@@ -228,4 +259,4 @@
 
 <script src="./script.js"></script>
 </body>
-</html>
+            </html>
